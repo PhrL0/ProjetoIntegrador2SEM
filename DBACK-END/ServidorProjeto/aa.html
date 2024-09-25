@@ -7,7 +7,7 @@
         var ws = new WebSocket('ws://127.0.0.1:1880/ws/data');
         ws.onmessage = function(event) {
             var data = JSON.parse(event.data);
-            document.getElementById('output').innerHTML = 'ValorA: ' + data.ValorA + ', ValorB: ' + data.ValorB;
+            document.getElementById('output').innerHTML = 'Contador: ' + data.Contador1 ;
         };
     </script>
 </head>
