@@ -5,7 +5,7 @@ import time
 import random
 
 url = 'ws://127.0.0.1:1880/ws/data'
-cont = 1
+cont = 2
 # Dados que você quer enviar (dinâmicos)
 def gerar_dados():
     return {
