@@ -4,10 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
 from email import encoders
 
-def email(nomePdf):
+def enviaEmail(nomeRemetente,nomeDestinatario,assunto,mesagem,nomePdf):
     # Configurações do e-mail
-    remetente = 'ph137163@gmail.com'
-    destinatario = 'gamesvelozg@gmail.com'
+    remetente = nomeRemetente
+    destinatario = nomeDestinatario
     senha = 'okyb kimo iqmb pwka'  # Certifique-se de usar uma senha de app ou de estar com autenticação correta
 
     # Criar o objeto da mensagem
@@ -15,10 +15,10 @@ def email(nomePdf):
 
     msg['From'] = remetente
     msg['To'] = destinatario
-    msg['Subject'] = 'Aqui está o PDF gerado'
+    msg['Subject'] = assunto
 
     # Corpo do e-mail
-    corpo = 'Por favor, veja o PDF anexado.'
+    corpo = mesagem
     msg.attach(MIMEText(corpo, 'plain'))
 
     # Anexar o PDF
