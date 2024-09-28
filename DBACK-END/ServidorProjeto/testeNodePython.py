@@ -1,45 +1,32 @@
 import mysql.connector
 
-#DEPENDENCIAS PDF
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
 #CONSULTA BANCO
-conexao = mysql.connector.connect(
-    host = 'localhost',
-    user = 'root',
-    password = 'aluno',
-    database = 'teste',
-)
+def fazConsulta(inicio,fim):
+    conexao = mysql.connector.connect(
+        host = 'localhost',
+        user = 'root',
+        password = 'aluno',
+        database = 'teste',
+    )   
 
-cursor = conexao.cursor()
+    cursor = conexao.cursor()
 
-comando = f'SELECT SUM(contador_acumulado) AS total_objetos FROM dados;'
-cursor.execute(comando)
+    comando = 'SELECT SUM(contador_acumulado) AS total_objetos FROM dados WHERE dia BETWEEN %s AND %s;'
+    cursor.execute(comando,(inicio, fim))
 
-resultado = cursor.fetchall()
+    resultado = cursor.fetchall()
+ 
+    cursor.close()
+    conexao.close()
 
-numeroBd = resultado[0][0]  
+    numeroBd = resultado[0][0] 
 
-print(numeroBd)
-cursor.close()
-conexao.close()
+    return numeroBd
 
-###########################################################
-#GERA PDF 
 
-# Crie um arquivo PDF em branco
-c = canvas.Canvas("exemplo.pdf", pagesize=letter)
 
-# Defina o título do documento
-c.setTitle("Meu Documento PDF")
 
-# Adicione texto ao PDF
-c.drawString("Olá, Sophia!",numeroBd)
 
-# Salve o arquivo PDF
-c.showPage()
-c.save()
-print("PDF criado com sucesso.")
+
 
 
