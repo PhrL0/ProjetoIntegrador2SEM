@@ -1,127 +1,141 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-import os
-from enviarEmail import enviaEmail
 import schedule
 import time
 import threading
 import datetime
+from enviarEmail import enviaEmail
+import os
 
 def run_scheduler():
     while True:
-        schedule.run_pending()  # Executa as tarefas agendadas
-        time.sleep(1)  # Aguarda um segundo antes de verificar novamente
+        schedule.run_pending()
+        time.sleep(1)
 
-st.header("Bem-vindo à página de administração")
+# Inicializando a thread para o agendamento
+scheduler_thread = threading.Thread(target=run_scheduler, daemon=True)
+scheduler_thread.start()
 
-st.sidebar.header("Menu")
-opcao = st.sidebar.selectbox("Escolha uma opção:", ["Relatório", "Email"])
+# Simulação de login (ajuste de acordo com o sistema real)
+login = True
 
-if opcao == "Relatório":
+# Inicializando o estado da sessão
+if 'login' not in st.session_state:
+    st.session_state['login'] = True
 
-    st.subheader("Relatório")
-
-    tipoRelatorio = st.selectbox("Deseja gerar um relatório ou importar um relátorio?", ["Gerar", "Importar"])
-
+# Se o usuário ainda não estiver logado, mostrar a tela de login
+if not st.session_state['login']:
+    st.title("Página de Login")
     
-    if tipoRelatorio == "Gerar":
+    # Campos para o usuário inserir nome e senha
+    username = st.text_input("Usuário")
+    password = st.text_input("Senha", type="password")
+    
+    # Botão para realizar o login
+    if st.button("Login"):
+        if login:
+            st.session_state['login'] = True
+            st.success("Login realizado com sucesso!")
+        else:
+            st.error("Usuário ou senha incorretos.")
+else:
+    st.header("Bem-vindo à página de administração")
 
-        col1,col2,col3 = st.columns(3)
+    st.sidebar.header("Menu")
+    opcao = st.sidebar.selectbox("Escolha uma opção:", ["Relatório", "Email","Consulta"])
 
-        # Início do formulário
-        with st.form(key='form1'):
-            
-            with col1:
-                # Input de texto
-                nomeSolicitante = st.text_input("Nome Solicitante")
-            with col2:
-                # Input de e-mail
-                email = st.text_input("E-mail")
-            with col3:
-                objetos = st.selectbox("Selecione a classe:",["obj1","obj2","Todos"])
-        if st.button("Gerar Relatório"):
-            with st.spinner("Carregando... por favor aguarde"):
-                time.sleep(3)
-            st.success("Relatório gerado com sucesso")
+    if opcao == "Relatório":
+        st.subheader("Relatório")
+        tipoRelatorio = st.selectbox("Deseja gerar um relatório ou importar um relátorio?", ["Gerar", "Importar"])
 
-    if tipoRelatorio == "Importar":
+        if tipoRelatorio == "Gerar":
+            col1, col2, col3 = st.columns(3)
 
-        # Upload de um arquivo de texto ou CSV
-        uploaded_file = st.file_uploader("Escolha um arquivo pdf", type=["pdf"])
-        if st.button("Enviar"):
-            pathDestino = "pdf/"
-if opcao == "Email":
-
-    st.subheader("Email")
-
-    tipoEmail= st.selectbox("Deseja enviar um email agora ou agendar?", ["Agora", "Agendar"])
-
-    if tipoEmail == "Agora":
-
-        # Início do formulário
-        with st.form(key='form2', clear_on_submit=True):
-            
-            # Input de email
-            nomeRemetente = st.text_input("Email Remetente")
-            nomeDestinatario = st.text_input("Email Destinatario")
-         
-            # Input de texto
-            assunto = st.text_input("Assunto")
-            corpo = st.text_area("Mensagem")
-
-            # Upload de um arquivo de texto ou CSV
-            uploaded_file = st.file_uploader("Escolha um arquivo pdf", type=["pdf"])
-            if uploaded_file is not None:
-                nomeArquivo = uploaded_file.name
-            
-            
-            if st.form_submit_button("Enviar"):
+            # Início do formulário
+            with st.form(key='form1'):
+                with col1:
+                    # Input de texto
+                    nomeSolicitante = st.text_input("Nome Solicitante")
+                with col2:
+                    # Input de e-mail
+                    email = st.text_input("E-mail")
+                with col3:
+                    objetos = st.selectbox("Selecione a classe:", ["obj1", "obj2", "Todos"])
+            observacao = st.text_area("Observação:")
+            if st.button("Gerar Relatório"):
                 with st.spinner("Carregando... por favor aguarde"):
-                    enviaEmail(nomeRemetente,nomeDestinatario,assunto,corpo,nomeArquivo)
-                    st.success("Email enviado com sucesso!")
+                    time.sleep(3)
+                st.success("Relatório gerado com sucesso")
 
-    if tipoEmail == "Agendar":
-
-        # Início do formulário
-        with st.form(key='form3', clear_on_submit=True):
-
-            col1,col2,col3 = st.columns(3)
-            
-            # Input de email
-            nomeRemetente = st.text_input("Email Remetente")
-            nomeDestinatario = st.text_input("Email Destinatario")
-         
-            # Input de texto
-            assunto = st.text_input("Assunto")
-            corpo = st.text_area("Mensagem")
-
-            with col1:
-                dia = st.date_input("Selecione o dia do agendamento")
-                hora = st.time_input("Selecione o horário do envio")
-                data_hora_agendada = datetime.datetime.combine(dia, hora)
-
+        if tipoRelatorio == "Importar":
             # Upload de um arquivo de texto ou CSV
             uploaded_file = st.file_uploader("Escolha um arquivo pdf", type=["pdf"])
+            if st.button("Enviar"):
+                pathDestino = "pdf/"
+                # Salvar o arquivo no diretório especificado
+                with open(os.path.join(pathDestino, uploaded_file.name), "wb") as f:
+                    f.write(uploaded_file.getbuffer())
+                st.success("Arquivo enviado com sucesso!")
 
-            if uploaded_file is not None:
-                nomeArquivo = uploaded_file.name
-            
-            
-            if st.form_submit_button("Enviar"):
-                schedule.every().day.at(data_hora_agendada.strftime("%H:%M")).do(enviaEmail(nomeRemetente,nomeDestinatario,assunto,corpo,nomeArquivo))
+    if opcao == "Email":
+        st.subheader("Email")
+        tipoEmail = st.selectbox("Deseja enviar um email agora ou agendar?", ["Agora", "Agendar"])
 
-                # Iniciar o scheduler em uma nova thread
-                threading.Thread(target=run_scheduler, daemon=True).start()
+        if tipoEmail == "Agora":
+            # Início do formulário
+            with st.form(key='form2', clear_on_submit=True):
+                # Input de email
+                nomeRemetente = st.text_input("Email Remetente")
+                nomeDestinatario = st.text_input("Email Destinatário")
+                assunto = st.text_input("Assunto")
+                corpo = st.text_area("Mensagem")
+
+                # Upload de um arquivo PDF
+                uploaded_file = st.file_uploader("Escolha um arquivo pdf", type=["pdf"])
+                nomeArquivo = uploaded_file.name if uploaded_file else None
                 
+                if st.form_submit_button("Enviar"):
+                    with st.spinner("Carregando... por favor aguarde"):
+                        enviaEmail(nomeRemetente, nomeDestinatario, assunto, corpo, nomeArquivo)
+                        st.success("Email enviado com sucesso!")
 
-        
+        if tipoEmail == "Agendar":
+            with st.form(key='form3', clear_on_submit=True):
+                col1, col2, col3 = st.columns(3)
 
+                dias_da_semana = {
+                    "Segunda-feira": schedule.every().monday,
+                    "Terça-feira": schedule.every().tuesday,
+                    "Quarta-feira": schedule.every().wednesday,
+                    "Quinta-feira": schedule.every().thursday,
+                    "Sexta-feira": schedule.every().friday,
+                    "Sábado": schedule.every().saturday,
+                    "Domingo": schedule.every().sunday
+                }
 
+                nomeRemetente = st.text_input("Email Remetente")
+                nomeDestinatario = st.text_input("Email Destinatário")
+                assunto = st.text_input("Assunto")
+                corpo = st.text_area("Mensagem")
 
+                with col1:
+                    dia_selecionado = st.selectbox("Escolha um dia da semana:", list(dias_da_semana.keys()))
+                    hora = st.time_input("Selecione o horário do envio")
+                    hora_formatada = hora.strftime("%H:%M")
 
+                uploaded_file = st.file_uploader("Escolha um arquivo pdf", type=["pdf"])
+                nomeArquivo = uploaded_file.name if uploaded_file else None
 
-
-    
-            
-
+                if st.form_submit_button("Agendar"):
+                    dia = dias_da_semana[dia_selecionado]
+                    
+                    # Usar lambda para passar a função com parâmetros
+                    dia.at(hora_formatada).do(lambda: enviaEmail(nomeRemetente, nomeDestinatario, assunto, corpo, nomeArquivo))
+                    st.success(f"Email agendado para {dia_selecionado} às {hora_formatada}")
+    if opcao == "Consulta":
+        st.subheader("Consultas")
+        escolha = st.radio("Filtrar por:", ("Data","Classe","Tudo"))
+        if escolha == "Data":
+            dataIncio = st.date_input
+            dataTermino = st.date_input
+        if escolha == "Classe":
+            classeConsulta = st.text_input
