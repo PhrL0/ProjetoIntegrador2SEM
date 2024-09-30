@@ -12,7 +12,6 @@ def gerar_dados():
         'Contador1': cont,
         'Objeto': "Sapato"
     }
-
 # Função para enviar dados
 def on_open(ws):
     data = gerar_dados()  # Gera novos dados a cada conexão
