@@ -9,38 +9,35 @@ from ultralytics import YOLO, solutions
 url = 'ws://127.0.0.1:1880/ws/data'
 
 
-# Função para gerar dados de contagem
 def gerar_dados(cont):
     return {
         'Contador1': cont,
     }
 
 
-# Função para enviar dados via WebSocket
+
 def on_open(ws, data):
     ws.send(json.dumps(data))
     #print("Dados enviados com sucesso:", data)
-    ws.close()
 
 
-# Função para conectar ao WebSocket e enviar dados
+
 def conecta_websocket(dados):
     ws = websocket.WebSocketApp(url, on_open=lambda ws: on_open(ws, dados))
     ws.run_forever()
 
 
-# Função para repetir a conexão periodicamente
+
 def repetir_conexao(dados):
     # Executar a conexão de forma assíncrona
     thread = threading.Thread(target=conecta_websocket, args=(dados,))
     thread.start()
 
-
 model = YOLO("yolov8s.pt")
 cap = cv2.VideoCapture(0)
 assert cap.isOpened(), "Error reading video file"
 w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
-
+listaVerifica = set()
 # Define region points
 region_points = [(20, 400), (625, 404), (625, 360), (20, 360)]
 
@@ -65,9 +62,17 @@ while cap.isOpened():
 
     im0 = counter.start_counting(im0, tracks)
     contador = counter.out_counts
-    dados = gerar_dados(contador)
-    # Iniciar a tarefa periódica
-    repetir_conexao(dados)
+
+    if contador not in listaVerifica:
+        listaVerifica.add(contador)
+        dados = gerar_dados(contador)
+        repetir_conexao(dados)
+
+    for track in tracks:
+        if track.boxes is not None:
+            for box in track.boxes:
+                class_id = int(box.cls)
+                print(class_id)
     video_writer.write(im0)
 
 cap.release()

@@ -10,7 +10,6 @@ cont = 2
 def gerar_dados():
     return {
         'Contador1': cont,
-        'Objeto': "Sapato"
     }
 # Função para enviar dados
 def on_open(ws):
