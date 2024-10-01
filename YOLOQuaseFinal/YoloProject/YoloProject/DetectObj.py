@@ -2,7 +2,7 @@ import cv2
 from ultralytics import YOLO
 
 # Carregar o modelo YOLOv8
-model = YOLO("runs/detect/train5/weights/best.pt")
+model = YOLO("yolov8n.pt")
 
 # Abrir a webcam (0 para a webcam padrão)
 cap = cv2.VideoCapture(0)

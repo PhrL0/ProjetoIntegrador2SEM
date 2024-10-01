@@ -4,6 +4,9 @@ import time
 import threading
 import datetime
 from enviarEmail import enviaEmail
+from testePdf import criaPdf
+from testeNodePython import tabelaClasses
+
 import os
 
 def run_scheduler():
@@ -54,16 +57,23 @@ else:
             with st.form(key='form1'):
                 with col1:
                     # Input de texto
-                    nomeSolicitante = st.text_input("Nome Solicitante")
+                    nome = st.text_input("Nome:")
                 with col2:
                     # Input de e-mail
-                    email = st.text_input("E-mail")
+                    email = st.text_input("E-mail:")
                 with col3:
-                    objetos = st.selectbox("Selecione a classe:", ["obj1", "obj2", "Todos"])
-            observacao = st.text_area("Observação:")
+                    objetos = st.selectbox("Selecione a classe:", ["Cadarço", "Palmilha", "Tênis"])
+            nomePdf = st.text_input("Nome Arquivo:")
+            titulo = st.text_input("Título:")
+            observacao = st.text_input("Observação:")
             if st.button("Gerar Relatório"):
                 with st.spinner("Carregando... por favor aguarde"):
-                    time.sleep(3)
+                    criaPdf(nomePdf,titulo,nome,objetos,observacao)
+                    pathDestino = "pdf/"
+                    # Salvar o arquivo no diretório especificado
+                    salvarArquivo = os.path.join(pathDestino, nomePdf)
+                    with open(salvarArquivo, "w") as file:
+                        file.write("Este é o conteúdo do relatório.")
                 st.success("Relatório gerado com sucesso")
 
         if tipoRelatorio == "Importar":
@@ -135,7 +145,9 @@ else:
         st.subheader("Consultas")
         escolha = st.radio("Filtrar por:", ("Data","Classe","Tudo"))
         if escolha == "Data":
-            dataIncio = st.date_input
-            dataTermino = st.date_input
+            dataIncioConsulta = st.date_input("Data Inicio:")
+            dataTerminoConsulta = st.date_input("Data Termino:")
+            if dataIncioConsulta and dataTerminoConsulta:
+                tabelaClasses(dataIncioConsulta,dataTerminoConsulta)
         if escolha == "Classe":
             classeConsulta = st.text_input
