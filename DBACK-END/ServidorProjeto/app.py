@@ -7,6 +7,7 @@ from enviarEmail import enviaEmail
 from testePdf import criaPdf
 from testeNodePython import tabelaFiltroData
 from testeNodePython import tabelaFiltroClasse
+from testeNodePython import tabelaFiltroTudo
 
 import os
 
@@ -146,10 +147,24 @@ else:
         st.subheader("Consultas")
         escolha = st.radio("Filtrar por:", ("Data","Classe","Tudo"))
         if escolha == "Data":
-            dataIncioConsulta = st.date_input("Data Inicio:")
-            dataTerminoConsulta = st.date_input("Data Termino:")
-            if dataIncioConsulta and dataTerminoConsulta:
-                tabelaFiltroData(dataIncioConsulta,dataTerminoConsulta)
+            col4,col5 = st.columns(2)
+            
+            with col4:
+                dataIncioConsulta1 = st.date_input("Data Inicio:")
+            with col5:
+                dataTerminoConsulta1 = st.date_input("Data Termino:")
+            if dataIncioConsulta1 and dataTerminoConsulta1:
+                tabelaFiltroData(dataIncioConsulta1,dataTerminoConsulta1)
         if escolha == "Classe":
-            classeConsulta = st.selectbox("Classe",["Sapato"])
-            tabelaFiltroClasse(classeConsulta)
+            classeConsulta1 = st.selectbox("Classe",["Sapato"])
+            tabelaFiltroClasse(classeConsulta1)
+        if escolha == "Tudo":
+            col6,col7,col8 = st.columns(3)
+            with col6:
+                dataIncioConsulta2 = st.date_input("Data Inicio:")
+            with col7:
+                dataTerminoConsulta2 = st.date_input("Data Termino:")
+            with col8:
+                classeConsulta2 = st.selectbox("Classe",["Sapato"])
+            if (dataIncioConsulta2 and dataTerminoConsulta2) and classeConsulta2:
+                tabelaFiltroTudo(dataIncioConsulta2,dataTerminoConsulta2,classeConsulta2)

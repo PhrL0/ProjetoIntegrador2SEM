@@ -62,6 +62,22 @@ def tabelaFiltroClasse(classeObj):
     st.table(df)
 
 
+def tabelaFiltroTudo(inicio,fim,classeObj):
+
+    cursor = conexao.cursor()
+
+    comando = 'SELECT classe,dia,hora FROM dados WHERE dia BETWEEN %s AND %s AND classe=%s;'
+    cursor.execute(comando,(inicio,fim,classeObj))
+    resultado = cursor.fetchall()
+    st.header('Consulta banco de dados')
+
+    df = pd.DataFrame(resultado, columns=['Objeto', 'Data', 'Hora'])
+
+    st.table(df)
+
+
+
+
 
 
 

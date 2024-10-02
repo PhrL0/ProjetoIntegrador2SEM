@@ -1,6 +1,5 @@
 import cv2
 from ultralytics import YOLO
-
 # Carregar o modelo YOLOv8
 model = YOLO("yolov8n.pt")
 
