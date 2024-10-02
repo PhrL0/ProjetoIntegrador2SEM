@@ -5,7 +5,8 @@ import threading
 import datetime
 from enviarEmail import enviaEmail
 from testePdf import criaPdf
-from testeNodePython import tabelaClasses
+from testeNodePython import tabelaFiltroData
+from testeNodePython import tabelaFiltroClasse
 
 import os
 
@@ -148,6 +149,7 @@ else:
             dataIncioConsulta = st.date_input("Data Inicio:")
             dataTerminoConsulta = st.date_input("Data Termino:")
             if dataIncioConsulta and dataTerminoConsulta:
-                tabelaClasses(dataIncioConsulta,dataTerminoConsulta)
+                tabelaFiltroData(dataIncioConsulta,dataTerminoConsulta)
         if escolha == "Classe":
-            classeConsulta = st.text_input
+            classeConsulta = st.selectbox("Classe",["Sapato"])
+            tabelaFiltroClasse(classeConsulta)
