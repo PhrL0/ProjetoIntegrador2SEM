@@ -1,12 +1,12 @@
 import cv2
-
+import streamlit as st
 from ultralytics import YOLO, solutions
 
 model = YOLO("yolov8s.pt")
 cap = cv2.VideoCapture(0)
 assert cap.isOpened(), "Error reading video file"
 w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
-
+frame_placeholder = st.empty()
 # Define region points
 region_points = [(20, 400), (625, 404), (625, 360), (20, 360)]
 
@@ -29,9 +29,14 @@ while cap.isOpened():
         break
     tracks = model.track(im0, persist=True, show=False)
 
-    im0 = counter.start_counting(im0, tracks)
-    contador = counter.out_counts
-    print(contador)
+    im0 = counter.count(im0)
+
+    frame_placeholder.image(im0,channels="RGB")
+    
+    pegaClasse = counter.classwise_counts
+    print(pegaClasse)
+    person_out = pegaClasse.get('person', {}).get('OUT', 0)
+    print(person_out)
     video_writer.write(im0)
 
 cap.release()
