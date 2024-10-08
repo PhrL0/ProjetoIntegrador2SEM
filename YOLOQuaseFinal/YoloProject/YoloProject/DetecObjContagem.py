@@ -2,18 +2,23 @@ import cv2
 import streamlit as st
 from ultralytics import YOLO, solutions
 
-model = YOLO("yolov8s.pt")
+# Carregar o modelo YOLOv8
+model = YOLO("yolov8n.pt")
+
+# Acessar a câmera
 cap = cv2.VideoCapture(0)
-assert cap.isOpened(), "Error reading video file"
+assert cap.isOpened(), "Erro ao acessar a câmera"
+
+# Pegar as dimensões do vídeo
 w, h, fps = (int(cap.get(x)) for x in (cv2.CAP_PROP_FRAME_WIDTH, cv2.CAP_PROP_FRAME_HEIGHT, cv2.CAP_PROP_FPS))
+
+# Placeholder para exibir os frames
 frame_placeholder = st.empty()
-# Define region points
+
+# Definir os pontos da região de interesse
 region_points = [(20, 400), (625, 404), (625, 360), (20, 360)]
 
-# Video writer
-video_writer = cv2.VideoWriter("object_counting_output.avi", cv2.VideoWriter_fourcc(*"mp4v"), fps, (w, h))
-
-# Init Object Counter
+# Inicializar o contador de objetos
 counter = solutions.ObjectCounter(
     view_img=True,
     reg_pts=region_points,
@@ -22,23 +27,29 @@ counter = solutions.ObjectCounter(
     line_thickness=2,
 )
 
+# Loop para leitura e processamento dos frames
 while cap.isOpened():
     success, im0 = cap.read()
     if not success:
-        print("Video frame is empty or video processing has been successfully completed.")
+        st.warning("Frame de vídeo vazio ou processamento de vídeo concluído.")
         break
+
+    # Rastrear objetos com YOLO
     tracks = model.track(im0, persist=True, show=False)
 
+    # Contar objetos na imagem
     im0 = counter.count(im0)
 
-    frame_placeholder.image(im0,channels="RGB")
-    
+    # Converter o frame de BGR (OpenCV) para RGB (para exibir no Streamlit)
+    frame = cv2.cvtColor(im0, cv2.COLOR_BGR2RGB)
+
+    # Atualizar o frame no Streamlit
+    frame_placeholder.image(frame, channels="RGB")
+
+    # Pegar a contagem de classes, como pessoas detectadas saindo
     pegaClasse = counter.classwise_counts
-    print(pegaClasse)
     person_out = pegaClasse.get('person', {}).get('OUT', 0)
-    print(person_out)
-    video_writer.write(im0)
+
 
 cap.release()
-video_writer.release()
 cv2.destroyAllWindows()
