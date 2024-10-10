@@ -3,7 +3,7 @@ import streamlit as st
 from ultralytics import YOLO, solutions
 
 # Carregar o modelo YOLOv8
-model = YOLO("yolov8n.pt")
+model = YOLO("yolo11s.pt")
 
 # Acessar a câmera
 cap = cv2.VideoCapture(0)
@@ -25,6 +25,7 @@ counter = solutions.ObjectCounter(
     names=model.names,
     draw_tracks=True,
     line_thickness=2,
+    show = False,
 )
 
 # Loop para leitura e processamento dos frames
@@ -50,6 +51,8 @@ while cap.isOpened():
     pegaClasse = counter.classwise_counts
     person_out = pegaClasse.get('person', {}).get('OUT', 0)
 
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
 
 cap.release()
 cv2.destroyAllWindows()
