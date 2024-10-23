@@ -96,7 +96,7 @@ var spark1 = {
         padding: {
             top: 20,
             bottom: 10,
-            left: 110
+            left: 10
         }
     },
     colors: ['#fff'],
@@ -137,7 +137,7 @@ var spark2 = {
         padding: {
             top: 20,
             bottom: 10,
-            left: 110
+            left: 10
         }
     },
     colors: ['#fff'],
@@ -178,7 +178,7 @@ var spark3 = {
         padding: {
             top: 20,
             bottom: 10,
-            left: 110
+            left: 10
         }
     },
     colors: ['#fff'],

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Agdasima:wght@400;700&family=Playwrite+GB+S:ital,wght@0,100..400;1,100..400&display=swap');
 /* Reset geral */
 * {
     margin: 0;
@@ -25,17 +26,15 @@ main {
 }
 
 /* Container principal */
-.container {
-    max-width: 1200px;
-    margin: auto;
+.container-principal {
     padding: 20px;
 }
 
 /* Layout da câmera e gráficos */
 .content-layout {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: flex-start;
 }
 
 /* Câmera ao vivo */
@@ -45,7 +44,7 @@ main {
 
 #videoElement {
     width: 100%;
-    max-width: 500px;
+    width: 650px;
     border-radius: 10px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -53,13 +52,43 @@ main {
 /* Gráficos */
 .chart-container {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #02407e;
+    color: #fff;
+    height: 100px;
+    padding: 10px;
+    
+}
+
+.nav-shark{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 0;
+    gap: 30px;
+}
+
+.nav-shark li{
+    list-style-type: none;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    margin-bottom: 0;
+    color: #ABDCFF;
+    font-family: "Agdasima", sans-serif;
 }
 
 #chart-donut,
 #chart-line {
     max-width: 400px;
-    height: 350px;
     margin-bottom: 20px;
 }
 
@@ -67,7 +96,19 @@ main {
 .sparkboxes {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+}
+
+.sparkposition{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.camera-charts-position{
+    display: flex;
+    flex-direction: row;    
+    justify-content: center;
+
 }
 
 .sparkboxes .box {
@@ -99,7 +140,7 @@ main {
 
 /* Footer */
 footer {
-    background-color: #013365;
+    background-color: #02407e;
     color: #ffffff;
     text-align: center;
     width: 100%;
